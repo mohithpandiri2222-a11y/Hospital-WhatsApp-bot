@@ -33,4 +33,4 @@ if __name__ == "__main__":
     init_db()
     print("[START] Hospital WhatsApp Bot starting...")
     print("[INFO] Webhook: POST /whatsapp-webhook")
-    app.run(debug=True, port=5000, use_reloader=False)
+    app.run(debug=Config.FLASK_ENV == "development", port=5000, use_reloader=False)
