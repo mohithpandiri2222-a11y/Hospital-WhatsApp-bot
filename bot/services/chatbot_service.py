@@ -199,11 +199,30 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
         return "Please enter your full name."
 
     doctor = data["doctor"]
+    chosen_date = data["date"]
+
+    # ── Re-check: block if doctor is on leave for chosen date ──
+    from db.connection import get_db
+    db = get_db()
+    on_leave = db.execute(
+        "SELECT id FROM doctor_leaves WHERE doctor_id=? AND leave_date=?",
+        (doctor["id"], chosen_date)
+    ).fetchone()
+    db.close()
+
+    if on_leave:
+        clear_session(phone)
+        return (
+            f"❌ Sorry! *{doctor['name']}* is not available on "
+            f"*{fmt_date(chosen_date)}* (marked on leave).\n\n"
+            "Type *hi* to book another date."
+        )
+
     result = book_appointment(
         phone=phone,
         name=name,
         doctor_id=doctor["id"],
-        date=data["date"],
+        date=chosen_date,
         slot_time=data["slot"]
     )
 
@@ -224,3 +243,4 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
         "Type *status* to view appointment.\n"
         "Type *cancel* to cancel."
     )
+
