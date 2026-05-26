@@ -1,0 +1,212 @@
+from db.connection import get_db
+from datetime import datetime, timedelta
+import csv
+import io
+
+def get_dashboard_stats():
+    db = get_db()
+    today = datetime.now().date().strftime("%Y-%m-%d")
+    tomorrow = (datetime.now().date() + timedelta(days=1)).strftime("%Y-%m-%d")
+
+    today_count = db.execute(
+        "SELECT COUNT(*) as c FROM appointments WHERE appointment_date=? AND status='booked'", (today,)
+    ).fetchone()["c"]
+
+    tomorrow_count = db.execute(
+        "SELECT COUNT(*) as c FROM appointments WHERE appointment_date=? AND status='booked'", (tomorrow,)
+    ).fetchone()["c"]
+
+    patient_count = db.execute("SELECT COUNT(*) as c FROM patients").fetchone()["c"]
+    doctor_count = db.execute("SELECT COUNT(*) as c FROM doctors").fetchone()["c"]
+    db.close()
+
+    return {
+        "today": today_count,
+        "tomorrow": tomorrow_count,
+        "patients": patient_count,
+        "doctors": doctor_count
+    }
+
+def get_appointments_for_date(date_str):
+    db = get_db()
+    rows = db.execute(
+        """SELECT a.id, a.token_number, a.patient_name, a.patient_phone,
+                  d.name as doctor_name, d.department, a.slot_time, a.status
+           FROM appointments a JOIN doctors d ON a.doctor_id=d.id
+           WHERE a.appointment_date=?
+           ORDER BY a.token_number""",
+        (date_str,)
+    ).fetchall()
+    db.close()
+    return [dict(r) for r in rows]
+
+def get_all_appointments(date=None, doctor_id=None, department=None, status=None):
+    db = get_db()
+    query = """SELECT a.id, a.token_number, a.patient_name, a.patient_phone,
+                      d.name as doctor_name, d.department, d.id as doctor_id,
+                      a.appointment_date, a.slot_time, a.status
+               FROM appointments a JOIN doctors d ON a.doctor_id=d.id
+               WHERE 1=1"""
+    params = []
+    if date:
+        query += " AND a.appointment_date=?"
+        params.append(date)
+    if doctor_id:
+        query += " AND a.doctor_id=?"
+        params.append(doctor_id)
+    if department:
+        query += " AND d.department=?"
+        params.append(department)
+    if status:
+        query += " AND a.status=?"
+        params.append(status)
+    query += " ORDER BY a.appointment_date DESC, a.token_number"
+    rows = db.execute(query, params).fetchall()
+    db.close()
+    return [dict(r) for r in rows]
+
+def cancel_appointment(appt_id):
+    db = get_db()
+    db.execute("UPDATE appointments SET status='cancelled' WHERE id=?", (appt_id,))
+    db.commit()
+    db.close()
+
+def complete_appointment(appt_id):
+    db = get_db()
+    db.execute("UPDATE appointments SET status='completed' WHERE id=?", (appt_id,))
+    db.commit()
+    db.close()
+
+def get_all_doctors():
+    db = get_db()
+    doctors = db.execute("SELECT * FROM doctors ORDER BY department, name").fetchall()
+    result = []
+    for d in doctors:
+        doc = dict(d)
+        leaves = db.execute(
+            "SELECT id, leave_date, reason FROM doctor_leaves WHERE doctor_id=? ORDER BY leave_date",
+            (d["id"],)
+        ).fetchall()
+        doc["leaves"] = [dict(l) for l in leaves]
+        result.append(doc)
+    db.close()
+    return result
+
+def mark_doctor_leave(doctor_id, leave_date, reason=""):
+    db = get_db()
+    try:
+        db.execute(
+            "INSERT OR IGNORE INTO doctor_leaves (doctor_id, leave_date, reason) VALUES (?,?,?)",
+            (doctor_id, leave_date, reason)
+        )
+        db.commit()
+        success = True
+    except Exception:
+        success = False
+    db.close()
+    return success
+
+def remove_doctor_leave(leave_id):
+    db = get_db()
+    db.execute("DELETE FROM doctor_leaves WHERE id=?", (leave_id,))
+    db.commit()
+    db.close()
+
+def get_all_patients(search=None):
+    db = get_db()
+    if search:
+        rows = db.execute(
+            """SELECT p.id, p.name, p.phone, p.created_at,
+                      COUNT(a.id) as total_appts,
+                      MAX(a.appointment_date) as last_appt
+               FROM patients p LEFT JOIN appointments a ON p.phone=a.patient_phone
+               WHERE p.name LIKE ? OR p.phone LIKE ?
+               GROUP BY p.id ORDER BY p.created_at DESC""",
+            (f"%{search}%", f"%{search}%")
+        ).fetchall()
+    else:
+        rows = db.execute(
+            """SELECT p.id, p.name, p.phone, p.created_at,
+                      COUNT(a.id) as total_appts,
+                      MAX(a.appointment_date) as last_appt
+               FROM patients p LEFT JOIN appointments a ON p.phone=a.patient_phone
+               GROUP BY p.id ORDER BY p.created_at DESC"""
+        ).fetchall()
+    db.close()
+    return [dict(r) for r in rows]
+
+def get_analytics_data():
+    db = get_db()
+    today = datetime.now().date()
+    thirty_days_ago = (today - timedelta(days=30)).strftime("%Y-%m-%d")
+    today_str = today.strftime("%Y-%m-%d")
+
+    # Per day (last 30 days)
+    daily = db.execute(
+        """SELECT appointment_date, COUNT(*) as count
+           FROM appointments
+           WHERE appointment_date >= ? AND appointment_date <= ? AND status != 'cancelled'
+           GROUP BY appointment_date ORDER BY appointment_date""",
+        (thirty_days_ago, today_str)
+    ).fetchall()
+
+    # Per department
+    by_dept = db.execute(
+        """SELECT d.department, COUNT(*) as count
+           FROM appointments a JOIN doctors d ON a.doctor_id=d.id
+           WHERE a.status != 'cancelled'
+           GROUP BY d.department ORDER BY count DESC"""
+    ).fetchall()
+
+    # Per doctor
+    by_doctor = db.execute(
+        """SELECT d.name, COUNT(*) as count
+           FROM appointments a JOIN doctors d ON a.doctor_id=d.id
+           WHERE a.status != 'cancelled'
+           GROUP BY d.name ORDER BY count DESC"""
+    ).fetchall()
+
+    # This month total
+    this_month = datetime.now().strftime("%Y-%m")
+    month_total = db.execute(
+        "SELECT COUNT(*) as c FROM appointments WHERE appointment_date LIKE ? AND status != 'cancelled'",
+        (f"{this_month}%",)
+    ).fetchone()["c"]
+
+    # Busiest day
+    busiest_day_row = db.execute(
+        """SELECT appointment_date, COUNT(*) as count
+           FROM appointments WHERE status != 'cancelled'
+           GROUP BY appointment_date ORDER BY count DESC LIMIT 1"""
+    ).fetchone()
+
+    # Busiest doctor
+    busiest_doctor_row = db.execute(
+        """SELECT d.name, COUNT(*) as count
+           FROM appointments a JOIN doctors d ON a.doctor_id=d.id
+           WHERE a.status != 'cancelled'
+           GROUP BY d.name ORDER BY count DESC LIMIT 1"""
+    ).fetchone()
+
+    db.close()
+    return {
+        "daily": [dict(r) for r in daily],
+        "by_dept": [dict(r) for r in by_dept],
+        "by_doctor": [dict(r) for r in by_doctor],
+        "month_total": month_total,
+        "busiest_day": dict(busiest_day_row) if busiest_day_row else None,
+        "busiest_doctor": dict(busiest_doctor_row) if busiest_doctor_row else None
+    }
+
+def export_csv(appointments):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["Token", "Patient Name", "Phone", "Doctor", "Department", "Date", "Time", "Status"])
+    for a in appointments:
+        writer.writerow([
+            a["token_number"], a["patient_name"], a["patient_phone"],
+            a["doctor_name"], a["department"], a["appointment_date"],
+            a["slot_time"], a["status"]
+        ])
+    output.seek(0)
+    return output.getvalue()

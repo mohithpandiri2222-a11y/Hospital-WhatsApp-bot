@@ -50,3 +50,14 @@ CREATE TABLE IF NOT EXISTS logs (
     details TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- DOCTOR LEAVES
+CREATE TABLE IF NOT EXISTS doctor_leaves (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    doctor_id INTEGER NOT NULL,
+    leave_date TEXT NOT NULL,
+    reason TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (doctor_id) REFERENCES doctors(id),
+    UNIQUE(doctor_id, leave_date)
+);

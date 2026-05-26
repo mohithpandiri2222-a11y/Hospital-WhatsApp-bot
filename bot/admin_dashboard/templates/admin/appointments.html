@@ -1,0 +1,88 @@
+{% extends "base_admin.html" %}
+{% block title %}Appointments{% endblock %}
+{% block content %}
+<div class="section-header">
+  <h1 class="page-title">Appointments</h1>
+  <a href="{{ url_for('admin.export_csv', **filters) }}" class="btn btn-outline btn-sm">⬇ Export CSV</a>
+</div>
+
+<!-- Filters -->
+<form method="GET" action="{{ url_for('admin.appointments') }}">
+<div class="filter-bar">
+  <div class="form-group">
+    <label>Date</label>
+    <input type="date" name="date" value="{{ filters.date }}">
+  </div>
+  <div class="form-group">
+    <label>Doctor</label>
+    <select name="doctor_id">
+      <option value="">All Doctors</option>
+      {% for d in doctors %}
+      <option value="{{ d.id }}" {% if filters.doctor_id == d.id|string %}selected{% endif %}>{{ d.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Department</label>
+    <select name="department">
+      <option value="">All Departments</option>
+      {% for dept in departments %}
+      <option value="{{ dept }}" {% if filters.department == dept %}selected{% endif %}>{{ dept }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Status</label>
+    <select name="status">
+      <option value="">All</option>
+      <option value="booked" {% if filters.status=='booked' %}selected{% endif %}>Booked</option>
+      <option value="cancelled" {% if filters.status=='cancelled' %}selected{% endif %}>Cancelled</option>
+      <option value="completed" {% if filters.status=='completed' %}selected{% endif %}>Completed</option>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Filter</button>
+  <a href="{{ url_for('admin.appointments') }}" class="btn btn-ghost">Clear</a>
+</div>
+</form>
+
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th><th>Patient</th><th>Phone</th><th>Doctor</th><th>Dept</th>
+        <th>Date</th><th>Time</th><th>Status</th><th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in appts %}
+      <tr>
+        <td><strong>#{{ a.token_number }}</strong></td>
+        <td>{{ a.patient_name or '—' }}</td>
+        <td>{{ a.patient_phone }}</td>
+        <td>{{ a.doctor_name }}</td>
+        <td>{{ a.department }}</td>
+        <td>{{ a.appointment_date }}</td>
+        <td>{{ a.slot_time }}</td>
+        <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
+        <td>
+          <div class="action-btns">
+            {% if a.status == 'booked' %}
+            <form method="POST" action="{{ url_for('admin.cancel_appointment', appt_id=a.id) }}" onsubmit="return confirm('Cancel?')">
+              <button class="btn btn-danger btn-sm">Cancel</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.complete_appointment', appt_id=a.id) }}" onsubmit="return confirm('Mark as completed?')">
+              <button class="btn btn-success btn-sm">Done</button>
+            </form>
+            {% else %}—{% endif %}
+          </div>
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row"><td colspan="9">No appointments found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="page-subtitle">{{ appts|length }} record(s) found.</p>
+{% endblock %}
+{% block scripts %}<script>const active='appointments';</script>{% endblock %}

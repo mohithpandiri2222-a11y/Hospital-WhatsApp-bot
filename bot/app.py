@@ -1,6 +1,7 @@
 from flask import Flask, jsonify
 from config import Config
 from routes.webhook_routes import webhook_bp
+from admin_dashboard.routes import admin_bp
 from db.connection import init_db
 from apscheduler.schedulers.background import BackgroundScheduler
 from jobs.appointment_reminder import send_appointment_reminders
@@ -9,12 +10,14 @@ import requests
 import os
 
 app = Flask(__name__)
+app.secret_key = Config.SECRET_KEY
 
 # ── Initialize DB (runs on both gunicorn and direct python) ──
 init_db()
 
-# ── Register Blueprints ───────────────────────────────────────
+# ── Register Blueprints ─────────────────────────────────────────────
 app.register_blueprint(webhook_bp)
+app.register_blueprint(admin_bp, url_prefix='/admin')
 
 # ── Health Check ──────────────────────────────────────────────
 @app.route("/")

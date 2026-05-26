@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Admin{% endblock %} — City Hospital</title>
+<meta name="description" content="Hospital WhatsApp Bot Admin Dashboard">
+<link rel="stylesheet" href="{{ url_for('admin.static', filename='css/admin.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Desktop Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <h1>🏥 City Hospital</h1>
+      <p>Admin Dashboard</p>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="{{ url_for('admin.dashboard') }}" class="nav-item {% if active=='dashboard' %}active{% endif %}">
+        <span class="icon">🏠</span> Dashboard
+      </a></li>
+      <li><a href="{{ url_for('admin.appointments') }}" class="nav-item {% if active=='appointments' %}active{% endif %}">
+        <span class="icon">📅</span> Appointments
+      </a></li>
+      <li><a href="{{ url_for('admin.doctors') }}" class="nav-item {% if active=='doctors' %}active{% endif %}">
+        <span class="icon">👨⚕️</span> Doctors
+      </a></li>
+      <li><a href="{{ url_for('admin.analytics') }}" class="nav-item {% if active=='analytics' %}active{% endif %}">
+        <span class="icon">📊</span> Analytics
+      </a></li>
+      <li><a href="{{ url_for('admin.patients') }}" class="nav-item {% if active=='patients' %}active{% endif %}">
+        <span class="icon">👥</span> Patients
+      </a></li>
+    </ul>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-logout">
+      <a href="{{ url_for('admin.logout') }}" class="nav-item">
+        <span class="icon">🚪</span> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for cat, msg in messages %}
+            <div class="flash flash-{{ cat }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+
+<!-- Mobile Bottom Tabs -->
+<nav class="bottom-tabs">
+  <a href="{{ url_for('admin.dashboard') }}" class="tab-item {% if active=='dashboard' %}active{% endif %}">
+    <span class="tab-icon">🏠</span><span>Home</span>
+  </a>
+  <a href="{{ url_for('admin.appointments') }}" class="tab-item {% if active=='appointments' %}active{% endif %}">
+    <span class="tab-icon">📅</span><span>Appts</span>
+  </a>
+  <a href="{{ url_for('admin.doctors') }}" class="tab-item {% if active=='doctors' %}active{% endif %}">
+    <span class="tab-icon">👨⚕️</span><span>Doctors</span>
+  </a>
+  <a href="{{ url_for('admin.analytics') }}" class="tab-item {% if active=='analytics' %}active{% endif %}">
+    <span class="tab-icon">📊</span><span>Analytics</span>
+  </a>
+  <a href="{{ url_for('admin.patients') }}" class="tab-item {% if active=='patients' %}active{% endif %}">
+    <span class="tab-icon">👥</span><span>Patients</span>
+  </a>
+</nav>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

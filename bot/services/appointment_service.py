@@ -34,7 +34,7 @@ def get_doctor(doctor_id: int) -> dict:
 # ── Available Dates ──────────────────────────────────────────
 
 def get_available_dates(doctor_id: int, days_ahead: int = 7) -> list:
-    """Return next N available dates for a doctor."""
+    """Return next N available dates for a doctor, excluding leave dates."""
     doctor = get_doctor(doctor_id)
     if not doctor:
         return []
@@ -45,15 +45,25 @@ def get_available_dates(doctor_id: int, days_ahead: int = 7) -> list:
         if d.strip() in DAYS_MAP
     ]
 
+    # Fetch leave dates for this doctor
+    db = get_db()
+    leave_rows = db.execute(
+        "SELECT leave_date FROM doctor_leaves WHERE doctor_id=?", (doctor_id,)
+    ).fetchall()
+    db.close()
+    leave_dates = {r["leave_date"] for r in leave_rows}
+
     dates = []
     today = datetime.now().date()
-    for i in range(1, days_ahead + 1):
+    for i in range(1, days_ahead + 14):  # search wider window to fill 5 slots
         d = today + timedelta(days=i)
-        if d.weekday() in available_day_nums:
-            dates.append(d.strftime("%Y-%m-%d"))
-        if len(dates) == 5:  # max 5 dates to show
+        date_str = d.strftime("%Y-%m-%d")
+        if d.weekday() in available_day_nums and date_str not in leave_dates:
+            dates.append(date_str)
+        if len(dates) == 5:
             break
     return dates
+
 
 # ── Available Slots ──────────────────────────────────────────
 

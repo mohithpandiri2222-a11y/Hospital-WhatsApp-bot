@@ -10,3 +10,6 @@ class Config:
     ADMIN_PHONE  = os.getenv("ADMIN_PHONE")
     DB_PATH      = os.getenv("DATABASE_PATH", "hospital.db")
     FLASK_ENV    = os.getenv("FLASK_ENV", "production")
+    ADMIN_PASSWORD   = os.getenv("ADMIN_PASSWORD", "hospital@123")
+    ADMIN_SECRET_URL = os.getenv("ADMIN_SECRET_URL", "secret-abc123")
+    SECRET_KEY       = os.getenv("SECRET_KEY", "dev-secret-key-change-in-prod")

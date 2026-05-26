@@ -1,0 +1,99 @@
+{% extends "base_admin.html" %}
+{% block title %}Analytics{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<h1 class="page-title">Analytics</h1>
+
+<!-- Stats Row -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-card-label">This Month</div>
+    <div class="stat-card-value">{{ data.month_total }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">Busiest Day</div>
+    <div class="stat-card-value">{% if data.busiest_day %}{{ data.busiest_day.appointment_date }} ({{ data.busiest_day.count }}){% else %}—{% endif %}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">Busiest Doctor</div>
+    <div class="stat-card-value">{% if data.busiest_doctor %}{{ data.busiest_doctor.name }}{% else %}—{% endif %}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-label">Top Department</div>
+    <div class="stat-card-value">{% if data.by_dept %}{{ data.by_dept[0].department }}{% else %}—{% endif %}</div>
+  </div>
+</div>
+
+<!-- Daily Bar Chart -->
+<div class="chart-card">
+  <div class="chart-title">Appointments per Day (Last 30 Days)</div>
+  <div class="chart-container" style="height:220px;">
+    <canvas id="dailyChart"></canvas>
+  </div>
+</div>
+
+<!-- Dept Pie + Doctor Bar side by side on desktop -->
+<div style="display:grid;grid-template-columns:1fr;gap:16px;">
+  <div class="chart-card">
+    <div class="chart-title">Appointments by Department</div>
+    <div class="chart-container" style="height:220px;">
+      <canvas id="deptChart"></canvas>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Appointments by Doctor</div>
+    <div class="chart-container" style="height:220px;">
+      <canvas id="doctorChart"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const active = 'analytics';
+const PRIMARY = '#0EA5E9';
+const COLORS = ['#0EA5E9','#10B981','#F59E0B','#EF4444','#8B5CF6','#F97316','#06B6D4','#84CC16'];
+
+const dailyData = {{ data.daily | tojson }};
+const deptData = {{ data.by_dept | tojson }};
+const doctorData = {{ data.by_doctor | tojson }};
+
+const chartDefaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+};
+
+// Daily chart
+new Chart(document.getElementById('dailyChart'), {
+  type: 'bar',
+  data: {
+    labels: dailyData.map(d => d.appointment_date),
+    datasets: [{ data: dailyData.map(d => d.count), backgroundColor: PRIMARY, borderRadius: 4 }]
+  },
+  options: { ...chartDefaults, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+
+// Dept pie chart
+new Chart(document.getElementById('deptChart'), {
+  type: 'pie',
+  data: {
+    labels: deptData.map(d => d.department),
+    datasets: [{ data: deptData.map(d => d.count), backgroundColor: COLORS }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+});
+
+// Doctor bar chart
+new Chart(document.getElementById('doctorChart'), {
+  type: 'bar',
+  data: {
+    labels: doctorData.map(d => d.name),
+    datasets: [{ data: doctorData.map(d => d.count), backgroundColor: COLORS, borderRadius: 4 }]
+  },
+  options: { ...chartDefaults, indexAxis: 'y', scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+{% endblock %}

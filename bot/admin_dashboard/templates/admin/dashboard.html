@@ -1,0 +1,107 @@
+{% extends "base_admin.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1 class="page-title">Dashboard</h1>
+<p class="page-subtitle">{{ today }} — Good morning!</p>
+
+<div class="warning-banner">
+  ⚠️ <span>SQLite resets on Render redeploy. Upgrade to a paid plan or PostgreSQL for persistent data.</span>
+</div>
+
+<!-- Summary Cards -->
+<div class="cards-grid">
+  <div class="card">
+    <span class="card-icon">📅</span>
+    <div class="card-value">{{ stats.today }}</div>
+    <div class="card-label">Today's Appointments</div>
+  </div>
+  <div class="card">
+    <span class="card-icon">🔜</span>
+    <div class="card-value">{{ stats.tomorrow }}</div>
+    <div class="card-label">Tomorrow's Appointments</div>
+  </div>
+  <div class="card">
+    <span class="card-icon">👥</span>
+    <div class="card-value">{{ stats.patients }}</div>
+    <div class="card-label">Total Patients</div>
+  </div>
+  <div class="card">
+    <span class="card-icon">👨⚕️</span>
+    <div class="card-value">{{ stats.doctors }}</div>
+    <div class="card-label">Total Doctors</div>
+  </div>
+</div>
+
+<!-- Today's Appointments -->
+<div class="section-header">
+  <h2 class="section-title">Today's Appointments</h2>
+  <a href="{{ url_for('admin.appointments', date=today) }}" class="btn btn-ghost btn-sm">View All</a>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th><th>Patient</th><th>Doctor</th><th>Dept</th><th>Time</th><th>Status</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in today_appts %}
+      <tr>
+        <td><strong>#{{ a.token_number }}</strong></td>
+        <td>{{ a.patient_name or '—' }}</td>
+        <td>{{ a.doctor_name }}</td>
+        <td>{{ a.department }}</td>
+        <td>{{ a.slot_time }}</td>
+        <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
+        <td>
+          {% if a.status == 'booked' %}
+          <form method="POST" action="{{ url_for('admin.cancel_appointment', appt_id=a.id) }}" onsubmit="return confirm('Cancel this appointment?')">
+            <button class="btn btn-danger btn-sm">Cancel</button>
+          </form>
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row"><td colspan="7">No appointments today.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Tomorrow's Appointments -->
+<div class="section-header">
+  <h2 class="section-title">Tomorrow's Appointments</h2>
+  <a href="{{ url_for('admin.appointments', date=tomorrow) }}" class="btn btn-ghost btn-sm">View All</a>
+</div>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Token</th><th>Patient</th><th>Doctor</th><th>Dept</th><th>Time</th><th>Status</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in tomorrow_appts %}
+      <tr>
+        <td><strong>#{{ a.token_number }}</strong></td>
+        <td>{{ a.patient_name or '—' }}</td>
+        <td>{{ a.doctor_name }}</td>
+        <td>{{ a.department }}</td>
+        <td>{{ a.slot_time }}</td>
+        <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
+        <td>
+          {% if a.status == 'booked' %}
+          <form method="POST" action="{{ url_for('admin.cancel_appointment', appt_id=a.id) }}" onsubmit="return confirm('Cancel this appointment?')">
+            <button class="btn btn-danger btn-sm">Cancel</button>
+          </form>
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr class="empty-row"><td colspan="7">No appointments tomorrow.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+{% block scripts %}<script>const active='dashboard';</script>{% endblock %}

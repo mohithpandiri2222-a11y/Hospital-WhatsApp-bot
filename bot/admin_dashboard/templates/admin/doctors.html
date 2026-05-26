@@ -1,0 +1,50 @@
+{% extends "base_admin.html" %}
+{% block title %}Doctors{% endblock %}
+{% block content %}
+<h1 class="page-title">Doctors & Leaves</h1>
+<p class="page-subtitle">Mark leave dates to block slots in the WhatsApp bot automatically.</p>
+
+{% for doc in doctors %}
+<div class="doctor-card">
+  <div class="doctor-card-header">
+    <div class="doctor-info">
+      <h3>👨⚕️ {{ doc.name }}</h3>
+      <p>{{ doc.department }}</p>
+    </div>
+  </div>
+  <div class="doctor-meta">
+    <span class="meta-chip">{{ doc.available_days }}</span>
+    <span class="meta-chip">{{ doc.start_time }} – {{ doc.end_time }}</span>
+    <span class="meta-chip">{{ doc.slot_duration_mins }} min slots</span>
+  </div>
+
+  <div class="leave-section">
+    <div class="leave-section-title">Leave Dates</div>
+    {% if doc.leaves %}
+    <div class="leave-tags">
+      {% for leave in doc.leaves %}
+      <span class="leave-tag">
+        {{ leave.leave_date }}{% if leave.reason %} — {{ leave.reason }}{% endif %}
+        <form method="POST" action="{{ url_for('admin.remove_leave', leave_id=leave.id) }}" onsubmit="return confirm('Remove this leave?')">
+          <button title="Remove">✕</button>
+        </form>
+      </span>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">No leaves marked.</p>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin.mark_leave') }}" class="add-leave-form">
+      <input type="hidden" name="doctor_id" value="{{ doc.id }}">
+      <input type="date" name="leave_date" min="{{ today }}" required placeholder="Select date">
+      <input type="text" name="reason" placeholder="Reason (optional)">
+      <button type="submit" class="btn btn-primary btn-sm">+ Mark Leave</button>
+    </form>
+  </div>
+</div>
+{% else %}
+<p style="text-align:center;color:var(--text-muted);padding:40px;">No doctors found.</p>
+{% endfor %}
+{% endblock %}
+{% block scripts %}<script>const active='doctors';</script>{% endblock %}
