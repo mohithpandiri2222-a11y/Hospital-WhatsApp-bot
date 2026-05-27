@@ -118,16 +118,47 @@ def get_all_doctors():
 
 def mark_doctor_leave(doctor_id, leave_date, reason=""):
     db = get_db()
+    success = False
     try:
+        # 1. Insert the leave record
         db.execute(
             "INSERT OR IGNORE INTO doctor_leaves (doctor_id, leave_date, reason) VALUES (?,?,?)",
             (doctor_id, leave_date, reason)
         )
+        
+        # 2. Find any existing appointments on this date for this doctor
+        appts = db.execute('''
+            SELECT a.id, a.patient_phone, a.slot_time, d.name as doctor_name 
+            FROM appointments a 
+            JOIN doctors d ON a.doctor_id = d.id 
+            WHERE a.doctor_id=? AND a.appointment_date=? AND a.status='booked'
+        ''', (doctor_id, leave_date)).fetchall()
+        
+        # 3. Auto-cancel them and notify patients
+        from services.whatsapp_service import send_whatsapp
+        from datetime import datetime
+        date_str = datetime.strptime(leave_date, "%Y-%m-%d").strftime("%a, %d %b")
+        
+        for appt in appts:
+            db.execute("UPDATE appointments SET status='cancelled' WHERE id=?", (appt["id"],))
+            msg = (
+                f"⚠️ *Emergency Appointment Cancellation*\n\n"
+                f"We apologize, but your appointment with *{appt['doctor_name']}* on "
+                f"*{date_str}* at *{appt['slot_time']}* has been cancelled because the doctor had to take an emergency leave.\n\n"
+                "Please type *hi* to book a new slot for a different day."
+            )
+            try:
+                send_whatsapp(appt["patient_phone"], msg)
+            except Exception as e:
+                print(f"[Leave Auto-Cancel] Notification error for {appt['patient_phone']}: {e}")
+                
         db.commit()
         success = True
-    except Exception:
+    except Exception as e:
+        print(f"[mark_doctor_leave] Error: {e}")
         success = False
-    db.close()
+    finally:
+        db.close()
     return success
 
 def remove_doctor_leave(leave_id):
