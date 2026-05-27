@@ -67,9 +67,33 @@ def get_all_appointments(date=None, doctor_id=None, department=None, status=None
 
 def cancel_appointment(appt_id):
     db = get_db()
+    
+    # Fetch appointment details for notification
+    appt = db.execute('''
+        SELECT a.patient_phone, a.appointment_date, a.slot_time, d.name as doctor_name 
+        FROM appointments a 
+        JOIN doctors d ON a.doctor_id = d.id 
+        WHERE a.id=?
+    ''', (appt_id,)).fetchone()
+    
     db.execute("UPDATE appointments SET status='cancelled' WHERE id=?", (appt_id,))
     db.commit()
     db.close()
+    
+    if appt:
+        try:
+            from services.whatsapp_service import send_whatsapp
+            from datetime import datetime
+            date_str = datetime.strptime(appt["appointment_date"], "%Y-%m-%d").strftime("%a, %d %b")
+            msg = (
+                f"⚠️ *Appointment Cancelled*\n\n"
+                f"We apologize, but your appointment with *{appt['doctor_name']}* on "
+                f"*{date_str}* at *{appt['slot_time']}* has been cancelled by the hospital.\n\n"
+                "Please type *hi* to book a new slot."
+            )
+            send_whatsapp(appt["patient_phone"], msg)
+        except Exception as e:
+            print(f"[Admin Cancel] Error sending notification: {e}")
 
 def complete_appointment(appt_id):
     db = get_db()
