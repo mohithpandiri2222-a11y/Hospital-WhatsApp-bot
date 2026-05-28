@@ -4,47 +4,86 @@
 <h1 class="page-title">Doctors & Leaves</h1>
 <p class="page-subtitle">Mark leave dates to block slots in the WhatsApp bot automatically.</p>
 
+<div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
 {% for doc in doctors %}
-<div class="doctor-card">
-  <div class="doctor-card-header">
-    <div class="doctor-info">
-      <h3 style="display:flex; align-items:center; gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 10V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><path d="M14 2v10a4 4 0 1 1-8 0V8"/><path d="M10 20a6 6 0 1 0 0-12"/><path d="M10 20v-4"/></svg> {{ doc.name }}</h3>
-      <p>{{ doc.department }}</p>
+<div class="doctor-card" style="padding: 24px; margin-bottom: 0;">
+  <div class="doctor-card-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div style="display:flex; gap:16px;">
+      <div style="width:56px; height:56px; border-radius:50%; background:#E2E8F0; display:flex; align-items:center; justify-content:center; flex-shrink: 0;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <h3 style="font-size: 16px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px;">{{ doc.name }} <span style="font-size: 10px; color: var(--success); font-weight: 600; text-transform: uppercase;">Active</span></h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">{{ doc.department }}</p>
+      </div>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted); cursor:pointer;"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+  </div>
+  
+  <div style="margin-top: 24px;">
+    <div style="font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Availability</div>
+    <div style="display: flex; gap: 6px;">
+      <span class="meta-chip">{{ doc.available_days }}</span>
     </div>
   </div>
-  <div class="doctor-meta">
-    <span class="meta-chip">{{ doc.available_days }}</span>
-    <span class="meta-chip">{{ doc.start_time }} – {{ doc.end_time }}</span>
-    <span class="meta-chip">{{ doc.slot_duration_mins }} min slots</span>
+
+  <div style="margin-top: 20px;">
+    <div style="font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Slot Timing</div>
+    <div style="font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      {{ doc.start_time }} - {{ doc.end_time }}
+    </div>
   </div>
 
-  <div class="leave-section">
-    <div class="leave-section-title">Leave Dates</div>
+  <hr style="border:none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+  <div class="leave-section" style="margin-top: 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+      <div style="font-size: 12px; font-weight: 600; color: var(--text);">Leave Dates</div>
+      <a href="#" style="font-size: 12px; color: var(--primary); font-weight: 500;">View All</a>
+    </div>
+    
     {% if doc.leaves %}
-    <div class="leave-tags">
+    <div class="leave-tags" style="display:flex; flex-direction:column; gap:12px;">
       {% for leave in doc.leaves %}
-      <span class="leave-tag">
-        {{ leave.leave_date }}{% if leave.reason %} — {{ leave.reason }}{% endif %}
-        <form method="POST" action="{{ url_for('admin.remove_leave', leave_id=leave.id) }}" onsubmit="return confirm('Remove this leave?')">
-          <button title="Remove">✕</button>
-        </form>
-      </span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size: 13px; color: var(--text-muted); display:flex; align-items:center; gap:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          {{ leave.leave_date }}
+        </div>
+        <div style="display:flex; align-items:center; gap: 8px;">
+          {% if leave.reason %}<span style="background: #FCEBEB; color: var(--danger); border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600;">{{ leave.reason }}</span>{% endif %}
+          <form method="POST" action="{{ url_for('admin.remove_leave', leave_id=leave.id) }}" onsubmit="return confirm('Remove this leave?')">
+            <button title="Remove" style="background:none; border:none; color:var(--text-muted); cursor:pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+          </form>
+        </div>
+      </div>
       {% endfor %}
     </div>
     {% else %}
-    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">No leaves marked.</p>
+    <p style="font-size:13px;color:var(--text-muted);">No leaves marked.</p>
     {% endif %}
 
-    <form method="POST" action="{{ url_for('admin.mark_leave') }}" class="add-leave-form">
+    <div style="font-size: 12px; font-weight: 600; color: var(--text); margin-top: 28px; margin-bottom: 16px;">Mark Leave</div>
+    <form method="POST" action="{{ url_for('admin.mark_leave') }}" style="display:flex; flex-direction:column; gap:16px;">
       <input type="hidden" name="doctor_id" value="{{ doc.id }}">
-      <input type="date" name="leave_date" min="{{ today }}" required placeholder="Select date">
-      <input type="text" name="reason" placeholder="Reason (optional)">
-      <button type="submit" class="btn btn-primary btn-sm">+ Mark Leave</button>
+      <div style="display:flex; gap:12px;">
+        <div style="flex:1;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Date</label>
+          <input type="date" name="leave_date" min="{{ today }}" required style="width:100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size:13px;">
+        </div>
+        <div style="flex:1;">
+          <label style="font-size:11px; font-weight:600; color:var(--text-muted); display:block; margin-bottom:6px;">Reason</label>
+          <input type="text" name="reason" placeholder="Select reason" style="width:100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size:13px;">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px; padding: 12px; font-size: 14px;">Mark Leave</button>
     </form>
   </div>
 </div>
 {% else %}
 <p style="text-align:center;color:var(--text-muted);padding:40px;">No doctors found.</p>
 {% endfor %}
+</div>
 {% endblock %}
 {% block scripts %}<script>const active='doctors';</script>{% endblock %}
