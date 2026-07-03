@@ -17,6 +17,7 @@ from services.appointment_service import (
     get_available_slots, book_appointment, cancel_latest_appointment,
     get_upcoming_appointment
 )
+from services.ai_service import get_ai_response
 
 # ── Helpers ───────────────────────────────────────────────────
 
@@ -67,7 +68,7 @@ def handle_message(phone: str, text: str) -> str:
 
     # State machine
     if step == "start" or step == "idle":
-        return _step_welcome(phone)
+        return get_ai_response(text)
 
     elif step == "choose_dept":
         return _step_choose_dept(phone, text, data)
