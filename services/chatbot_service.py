@@ -106,7 +106,10 @@ def _step_choose_dept(phone: str, text: str, data: dict) -> str:
         idx = int(text) - 1
         assert 0 <= idx < len(depts)
     except:
-        return f"Please reply with a number between 1 and {len(depts)}."
+        return (
+            f"Please select an option number (1-{len(depts)}) to continue booking.\n"
+            "If you want to ask a general question, type *cancel* first."
+        )
 
     dept = depts[idx]
     doctors = get_doctors_by_dept(dept)
@@ -128,7 +131,10 @@ def _step_choose_doctor(phone: str, text: str, data: dict) -> str:
         idx = int(text) - 1
         assert 0 <= idx < len(doctors)
     except:
-        return f"Please reply with a number between 1 and {len(doctors)}."
+        return (
+            f"Please select an option number (1-{len(doctors)}) to continue booking.\n"
+            "If you want to ask a general question, type *cancel* first."
+        )
 
     doctor = doctors[idx]
     dates = get_available_dates(doctor["id"])
@@ -155,7 +161,10 @@ def _step_choose_date(phone: str, text: str, data: dict) -> str:
         idx = int(text) - 1
         assert 0 <= idx < len(dates)
     except:
-        return f"Please reply with a number between 1 and {len(dates)}."
+        return (
+            f"Please select an option number (1-{len(dates)}) to continue booking.\n"
+            "If you want to ask a general question, type *cancel* first."
+        )
 
     chosen_date = dates[idx]
     doctor = data["doctor"]
@@ -183,7 +192,10 @@ def _step_choose_slot(phone: str, text: str, data: dict) -> str:
         idx = int(text) - 1
         assert 0 <= idx < len(slots)
     except:
-        return f"Please reply with a number between 1 and {len(slots)}."
+        return (
+            f"Please select an option number (1-{len(slots)}) to continue booking.\n"
+            "If you want to ask a general question, type *cancel* first."
+        )
 
     chosen_slot = slots[idx]
     data["slot"] = chosen_slot

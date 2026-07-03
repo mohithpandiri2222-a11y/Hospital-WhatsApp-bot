@@ -9,6 +9,10 @@ def send_whatsapp(to_phone: str, message: str):
     to_phone should be in format: whatsapp:+91XXXXXXXXXX
     """
     try:
+        try:
+            print("BOT RESPONSE:", message.encode("ascii", "ignore").decode("ascii"), flush=True)
+        except Exception:
+            pass
         if not to_phone.startswith("whatsapp:"):
             to_phone = f"whatsapp:{to_phone}"
 
