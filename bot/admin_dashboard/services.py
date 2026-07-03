@@ -1,4 +1,5 @@
 from db.connection import get_db
+from services.session_service import clear_session
 from datetime import datetime, timedelta
 import csv
 import io
@@ -81,6 +82,8 @@ def cancel_appointment(appt_id):
     db.close()
     
     if appt:
+        # Reset patient's chatbot session so they can interact normally
+        clear_session(appt["patient_phone"])
         try:
             from services.whatsapp_service import send_whatsapp
             from datetime import datetime
@@ -141,6 +144,8 @@ def mark_doctor_leave(doctor_id, leave_date, reason=""):
         
         for appt in appts:
             db.execute("UPDATE appointments SET status='cancelled' WHERE id=?", (appt["id"],))
+            # Reset patient's chatbot session so they can interact normally
+            clear_session(appt["patient_phone"])
             msg = (
                 f"⚠️ *Emergency Appointment Cancellation*\n\n"
                 f"We apologize, but your appointment with *{appt['doctor_name']}* on "
