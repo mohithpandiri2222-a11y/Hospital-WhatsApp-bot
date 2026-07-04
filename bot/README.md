@@ -36,7 +36,7 @@ ClinicFlow AI solves this by deploying a 24/7 WhatsApp chatbot that combines the
 ![WhatsApp Appointment Booking Flow](assets/3_whatsapp_booking_flow.png)
 
 ### 4. Admin Dashboard
-![Admin Dashboard](assets/5_admin_dashboard.png)
+![Admin Dashboard](assets/5_admin_dashboard_updated.png)
 
 ## Tech Stack
 - **Backend Framework**: Python, Flask
