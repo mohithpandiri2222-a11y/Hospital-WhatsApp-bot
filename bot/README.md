@@ -1,64 +1,89 @@
-# 🏥 Hospital WhatsApp Appointment Bot
+# ClinicFlow AI
 
-A WhatsApp chatbot that lets patients book, cancel, and view hospital appointments — built with Python + Flask + Twilio.
+## Overview
+ClinicFlow AI is a secure, automated WhatsApp appointment booking system designed for hospitals and clinics. It integrates a deterministic, rule-based booking state machine with an intelligent AI fallback assistant to handle patient queries, ensuring a seamless and reliable patient experience without compromising critical hospital operations.
 
----
+## Problem Statement
+Hospitals and clinics often face high call volumes for routine appointment scheduling, leading to overwhelmed receptionists, long wait times for patients, and administrative bottlenecks. Existing automated solutions are often either too rigid (frustrating patients) or too loosely constrained (leading to AI hallucinations in critical medical contexts).
 
-## 💬 What the Patient Sees
+## Solution
+ClinicFlow AI solves this by deploying a 24/7 WhatsApp chatbot that combines the reliability of a deterministic state machine for core booking operations with the flexibility of Groq-powered AI for general queries. It automates scheduling, cancellations, and status tracking while guaranteeing that the AI remains strictly within its defined operational bounds.
 
+## Key Features
+- **WhatsApp Appointment Booking**: Patients can book, view, and cancel appointments directly via WhatsApp.
+- **Rule-Based Booking State Machine**: Ensures the booking process is strict, guided, and error-free.
+- **Groq AI Fallback Assistant**: Intelligently handles unrecognized inputs and general inquiries.
+- **Emergency Symptom Detection**: Intercepts critical keywords before AI processing to provide immediate emergency helpline information.
+- **Admin Dashboard**: A centralized web interface for hospital staff to manage doctors, patients, and appointments.
+- **Automated Daily Reminders**: Sends scheduled appointment reminders via WhatsApp using APScheduler.
+
+## System Workflow
+1. **Patient interaction**: The patient sends a message to the hospital's Twilio WhatsApp number.
+2. **Webhook processing**: Twilio forwards the message to the Flask webhook.
+3. **Emergency check**: The system scans for critical medical keywords. If detected, an immediate emergency response is returned.
+4. **State Machine processing**: If the patient is in an active booking flow, the rule-based system handles the input.
+5. **AI Fallback**: If the input is not understood and the patient is not in a strict flow, the Groq AI assistant provides a helpful, context-aware response grounded in available hospital departments.
+
+## Screenshots
+
+### 1. AI Symptom Assistant
+![AI Symptom Assistant](assets/1_ai_symptom_assistant.png)
+
+### 2. Emergency Detection
+![Emergency Detection](assets/2_emergency_detection.png)
+
+### 3. WhatsApp Appointment Booking Flow
+![WhatsApp Appointment Booking Flow](assets/3_whatsapp_booking_flow.png)
+
+### 4. Admin Dashboard
+![Admin Dashboard](assets/5_admin_dashboard.png)
+
+## Tech Stack
+- **Backend Framework**: Python, Flask
+- **Messaging Integration**: Twilio API
+- **AI Integration**: Groq API
+- **Database**: SQLite
+- **Task Scheduling**: APScheduler
+- **Frontend (Dashboard)**: HTML, CSS (Vanilla)
+
+## Architecture Explanation
+The system follows a linear, decoupled architecture ensuring stability:
+
+```text
+Patient
+  |
+  v
+WhatsApp (Twilio)
+  |
+  v
+Flask Webhook
+  |
+  v
+Rule-Based State Machine
+  |
+  v
+If unknown query: Groq AI Fallback
+  |
+  v
+SQLite Database
+  |
+  v
+Admin Dashboard
 ```
-Patient:  hi
-Bot:      🏥 Welcome to City Hospital!
-          Select Department:
-          1. Cardiology
-          2. General OPD
-          3. Gynecology
-          4. Orthopedics
-          5. Pediatrics
 
-Patient:  2
-Bot:      🏥 General OPD
-          Choose your doctor:
-          1. Dr. Ramesh Kumar
-          2. Dr. Priya Sharma
+## AI Safety & Constraints
+To ensure absolute reliability in a healthcare context, ClinicFlow AI implements strict architectural boundaries:
+- **AI never books appointments directly**: The booking process is fully controlled by the deterministic state machine.
+- **AI cannot modify the database**: The AI service operates strictly in read-only mode for context generation and cannot execute writes or state changes.
+- **Emergency keywords bypass AI**: Life-threatening keywords immediately trigger a hardcoded emergency response, preventing the AI from dispensing potentially harmful medical advice.
+- **Booking logic remains deterministic**: The core hospital operations are never subjected to the unpredictability of language models.
 
-Patient:  1
-Bot:      👨‍⚕️ Dr. Ramesh Kumar
-          Choose appointment date:
-          1. Mon, 09 Jun
-          2. Tue, 10 Jun
-          ...
+## Installation and Setup
 
-Patient:  1
-Bot:      📅 Mon, 09 Jun
-          Available time slots:
-          1. 09:00
-          2. 09:15
-          3. 09:30
-          ...
-
-Patient:  2
-Bot:      Slot selected: 09:15
-          Please reply with your full name.
-
-Patient:  Rahul Sharma
-Bot:      ✅ Appointment Confirmed!
-          👤 Rahul Sharma
-          🏥 General OPD
-          👨‍⚕️ Dr. Ramesh Kumar
-          📅 Mon, 09 Jun
-          ⏰ 09:15
-          🎫 Token No: 3
-```
-
----
-
-## ⚙️ Setup (Step by Step)
-
-### Step 1 — Clone & Setup
-
+### 1. Clone & Setup
 ```bash
-cd hospital-whatsapp-demo
+git clone <repository-url>
+cd ClincFlow-AI-V2.0/bot
 python -m venv venv
 
 # Mac/Linux:
@@ -70,134 +95,33 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### Step 2 — Add your Twilio credentials
-
-Copy the example env file:
+### 2. Environment Variables
+Copy the `.env.example` file and configure your credentials:
 ```bash
 cp .env.example .env
 ```
+Update the `.env` file with the following variables:
+- `TWILIO_ACCOUNT_SID`: Your Twilio Account SID.
+- `TWILIO_AUTH_TOKEN`: Your Twilio Auth Token.
+- `TWILIO_WHATSAPP_FROM`: Your Twilio sandbox number (e.g., `whatsapp:+14155238886`).
+- `ADMIN_PHONE`: Your personal WhatsApp number for reports.
+- `GROQ_API_KEY`: Your Groq API key for the fallback assistant.
+- `DATABASE_PATH`: `hospital.db`
+- `FLASK_ENV`: `production` or `development`
 
-Edit `.env` and fill in your real Twilio values:
-```
-TWILIO_ACCOUNT_SID=ACxxxxxxx       ← from twilio.com console
-TWILIO_AUTH_TOKEN=xxxxxxx          ← from twilio.com console
-TWILIO_WHATSAPP_FROM=whatsapp:+14155238886   ← Twilio sandbox number
-ADMIN_PHONE=whatsapp:+91XXXXXXXXXX ← your own phone (for daily report)
-```
-
-> Get Twilio free trial: https://www.twilio.com/try-twilio
-> Activate WhatsApp sandbox: Twilio Console → Messaging → Try it out → Send a WhatsApp message
-
-### Step 3 — Run the server
-
+### 3. Run the Server
 ```bash
 python app.py
 ```
 
-You should see:
-```
-✅ Doctors seeded
-✅ Database ready: hospital.db
-🏥 Hospital WhatsApp Bot starting...
- * Running on http://127.0.0.1:5000
-```
-
-### Step 4 — Expose your local server with ngrok
-
-In a **new terminal** tab:
+### 4. Expose Local Server
+Use ngrok to expose your local server for Twilio webhook integration:
 ```bash
 ngrok http 5000
 ```
+Update your Twilio WhatsApp Sandbox Webhook URL with the provided ngrok HTTPS URL (append `/whatsapp-webhook`).
 
-Copy the HTTPS URL it gives you, e.g.:
-```
-https://abc123.ngrok-free.app
-```
-
-### Step 5 — Connect Twilio to your bot
-
-1. Go to: https://console.twilio.com/us1/develop/sms/try-it-out/whatsapp-learn
-2. Click **Sandbox Settings**
-3. In "When a message comes in", paste:
-   ```
-   https://abc123.ngrok-free.app/whatsapp-webhook
-   ```
-4. Set method to **POST**
-5. Save
-
-### Step 6 — Test it!
-
-From your phone, send **"hi"** to the Twilio sandbox WhatsApp number.
-The bot should reply instantly.
-
----
-
-## 📁 Project Structure
-
-```
-hospital-whatsapp-demo/
-├── app.py                          # Entry point + scheduler
-├── config.py                       # Env vars
-├── requirements.txt
-├── .env.example
-│
-├── db/
-│   ├── connection.py               # SQLite connect + seed doctors
-│   └── schema.sql                  # All table definitions
-│
-├── services/
-│   ├── whatsapp_service.py         # Twilio: send messages
-│   ├── session_service.py          # Track patient conversation state
-│   ├── appointment_service.py      # Book / cancel / check slots
-│   └── chatbot_service.py          # 🤖 Main conversation state machine
-│
-├── routes/
-│   └── webhook_routes.py           # POST /whatsapp-webhook
-│
-└── jobs/
-    └── appointment_reminder.py     # Daily 9AM reminder + admin report
-```
-
----
-
-## 🩺 Doctors Pre-loaded (Demo)
-
-| Doctor | Department | Days | Slots |
-|--------|-----------|------|-------|
-| Dr. Ramesh Kumar | General OPD | Mon–Fri | 9AM–1PM, every 15 min |
-| Dr. Priya Sharma | General OPD | Mon/Wed/Fri | 10AM–2PM, every 15 min |
-| Dr. Anil Verma | Orthopedics | Tue/Thu/Sat | 9AM–12PM, every 20 min |
-| Dr. Sunita Rao | Gynecology | Mon–Thu | 10AM–1PM, every 20 min |
-| Dr. Kiran Mehta | Cardiology | Mon/Wed/Fri | 9AM–12PM, every 30 min |
-| Dr. Deepak Singh | Pediatrics | Mon–Fri | 9AM–1PM, every 15 min |
-
----
-
-## 🤖 Patient Commands (any time)
-
-| Command | Action |
-|---------|--------|
-| hi / hello / book | Start booking flow |
-| status | View upcoming appointment |
-| cancel | Cancel upcoming appointment |
-| menu | Go back to main menu |
-
----
-
-## 🚀 Deploy to Render (free)
-
-1. Push to GitHub
-2. Go to render.com → New Web Service → Connect repo
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `python app.py`
-5. Add env vars from your `.env`
-6. Deploy → copy the Render URL → update Twilio webhook
-
----
-
-## 💰 Client Pitch (for small hospitals/clinics)
-
-> "Your receptionist spends 2–3 hours/day taking appointment calls.
-> This bot handles it 24/7 on WhatsApp automatically.
-> Patients get instant confirmation + token number + reminder.
-> ₹5,000–₹8,000/month setup + maintenance."
+## Future Improvements
+- **Multilingual Support**: Implement Hindi and Telugu localizations to improve accessibility for diverse patient demographics.
+- **Expanded Integrations**: Connect with broader Hospital Information Systems (HIS) and Electronic Health Records (EHR).
+- **Advanced Analytics**: Enhance the admin dashboard with deeper predictive insights regarding patient flow and peak appointment times.
