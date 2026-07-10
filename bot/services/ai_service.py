@@ -40,9 +40,9 @@ EMERGENCY_KEYWORDS: tuple[str, ...] = (
 )
 
 EMERGENCY_RESPONSE = (
-    "🚨 *EMERGENCY DETECTED*\n\n"
+    "*EMERGENCY DETECTED*\n\n"
     "Your message suggests a medical emergency.\n\n"
-    "🔴 Please *call emergency services immediately* or go to the "
+    "Please *call emergency services immediately* or go to the "
     "nearest Emergency Room (ER).\n\n"
     "Do NOT wait for a WhatsApp reply in a life-threatening situation.\n\n"
     "Emergency Helpline: *112* (India) / *911* (US)"
@@ -72,7 +72,8 @@ SYSTEM_PROMPT = (
     "If the patient needs a specialist that is not available "
     "(e.g. Ophthalmology, Dermatology, ENT), honestly tell them "
     "that department is not currently available at this hospital "
-    "and suggest contacting hospital staff for a referral."
+    "and suggest contacting hospital staff for a referral.\n\n"
+    "IMPORTANT: NEVER use any emojis in your response."
 )
 
 # ── Fallback Message ────────────────────────────────────────

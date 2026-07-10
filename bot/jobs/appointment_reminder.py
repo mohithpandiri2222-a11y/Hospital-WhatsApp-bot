@@ -24,13 +24,13 @@ def send_appointment_reminders():
     count = 0
     for appt in appointments:
         msg = (
-            f"⏰ *Appointment Reminder*\n\n"
+            f"*Appointment Reminder*\n\n"
             f"Hi {appt['patient_name'] or 'Patient'},\n"
             f"Your appointment is *tomorrow*!\n\n"
-            f"👨‍⚕️ {appt['doctor_name']}\n"
-            f"🏥 {appt['department']}\n"
-            f"⏰ {appt['slot_time']}\n"
-            f"🎫 Token No: *{appt['token_number']}*\n\n"
+            f"{appt['doctor_name']}\n"
+            f"{appt['department']}\n"
+            f"{appt['slot_time']}\n"
+            f"Token No: *{appt['token_number']}*\n\n"
             "Please arrive 10 mins early. Type *cancel* to cancel."
         )
         send_whatsapp(f"whatsapp:{appt['patient_phone']}", msg)
@@ -39,7 +39,7 @@ def send_appointment_reminders():
     # Send summary to admin
     if Config.ADMIN_PHONE:
         summary = (
-            f"📊 *Tomorrow's Appointments — {tomorrow}*\n\n"
+            f"*Tomorrow's Appointments — {tomorrow}*\n\n"
             f"Total booked: *{count}*\n\n"
         )
         for appt in appointments:

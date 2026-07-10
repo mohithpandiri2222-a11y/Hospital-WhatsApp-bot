@@ -43,22 +43,22 @@ def handle_message(phone: str, text: str) -> str:
         clear_session(phone)
         if result["success"]:
             return (
-                f"✅ Your appointment with {result['doctor']} on "
+                f"Your appointment with {result['doctor']} on "
                 f"{fmt_date(result['date'])} at {result['time']} has been cancelled.\n\n"
                 "Type *hi* to book a new appointment."
             )
-        return f"❌ {result['message']}\n\nType *hi* to book a new appointment."
+        return f"{result['message']}\n\nType *hi* to book a new appointment."
 
     if text in ("status", "my appointment", "appointment"):
         appt = get_upcoming_appointment(phone)
         if appt:
             return (
-                f"📋 *Your Upcoming Appointment*\n\n"
-                f"🏥 {appt['department']}\n"
-                f"👨‍⚕️ {appt['doctor_name']}\n"
-                f"📅 {fmt_date(appt['appointment_date'])}\n"
-                f"⏰ {appt['slot_time']}\n"
-                f"🎫 Token No: *{appt['token_number']}*\n\n"
+                f"*Your Upcoming Appointment*\n\n"
+                f"{appt['department']}\n"
+                f"{appt['doctor_name']}\n"
+                f"{fmt_date(appt['appointment_date'])}\n"
+                f"{appt['slot_time']}\n"
+                f"Token No: *{appt['token_number']}*\n\n"
                 "Type *cancel* to cancel this appointment."
             )
         return "No upcoming appointment found.\n\nType *hi* to book one."
@@ -93,12 +93,12 @@ def _step_welcome(phone: str) -> str:
     depts = get_departments()
     set_session(phone, "choose_dept", {"depts": depts})
     return (
-        "🏥 *Welcome to City Hospital*\n"
-        "Book your appointment in seconds!\n\n"
-        "*Select Department:*\n"
-        f"{numbered_list(depts)}\n\n"
-        "_Reply with the number (e.g. 1)_"
-    )
+                "*Welcome to City Hospital*\n"
+                "Book your appointment in seconds!\n\n"
+                "*Select Department:*\n"
+                f"{numbered_list(depts)}\n\n"
+                "_Reply with the number (e.g. 1)_"
+            )
 
 def _step_choose_dept(phone: str, text: str, data: dict) -> str:
     depts = data.get("depts", get_departments())
@@ -119,7 +119,7 @@ def _step_choose_dept(phone: str, text: str, data: dict) -> str:
     doctor_names = [d["name"] for d in doctors]
     set_session(phone, "choose_doctor", {"dept": dept, "doctors": doctors})
     return (
-        f"🏥 *{dept}*\n\n"
+        f"*{dept}*\n\n"
         "*Choose your doctor:*\n"
         f"{numbered_list(doctor_names)}\n\n"
         "_Reply with the number_"
@@ -148,8 +148,8 @@ def _step_choose_doctor(phone: str, text: str, data: dict) -> str:
     })
     date_labels = [fmt_date(d) for d in dates]
     return (
-        f"👨‍⚕️ *{doctor['name']}*\n"
-        f"🏥 {data['dept']}\n\n"
+        f"*{doctor['name']}*\n"
+        f"{data['dept']}\n\n"
         "*Choose appointment date:*\n"
         f"{numbered_list(date_labels)}\n\n"
         "_Reply with the number_"
@@ -180,7 +180,7 @@ def _step_choose_date(phone: str, text: str, data: dict) -> str:
         "slots": slots
     })
     return (
-        f"📅 *{fmt_date(chosen_date)}*\n\n"
+        f"*{fmt_date(chosen_date)}*\n\n"
         "*Available time slots:*\n"
         f"{numbered_list(slots)}\n\n"
         "_Reply with the number_"
@@ -201,7 +201,7 @@ def _step_choose_slot(phone: str, text: str, data: dict) -> str:
     data["slot"] = chosen_slot
     set_session(phone, "confirm_name", data)
     return (
-        f"⏰ Slot selected: *{chosen_slot}*\n\n"
+        f"Slot selected: *{chosen_slot}*\n\n"
         "Please reply with your *full name* to confirm the booking."
     )
 
@@ -226,7 +226,7 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
     if on_leave:
         clear_session(phone)
         return (
-            f"❌ Sorry! *{doctor['name']}* is not available on "
+            f"Sorry! *{doctor['name']}* is not available on "
             f"*{fmt_date(chosen_date)}* (marked on leave).\n\n"
             "Type *hi* to book another date."
         )
@@ -242,16 +242,16 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
     clear_session(phone)
 
     if not result["success"]:
-        return f"❌ {result['message']}\n\nType *hi* to try again."
+        return f"{result['message']}\n\nType *hi* to try again."
 
     return (
-        f"✅ *Appointment Confirmed!*\n\n"
-        f"👤 Patient: *{result['name']}*\n"
-        f"🏥 {result['department']}\n"
-        f"👨‍⚕️ {result['doctor']}\n"
-        f"📅 {fmt_date(result['date'])}\n"
-        f"⏰ {result['time']}\n"
-        f"🎫 Token No: *{result['token']}*\n\n"
+        f"*Appointment Confirmed!*\n\n"
+        f"Patient: *{result['name']}*\n"
+        f"{result['department']}\n"
+        f"{result['doctor']}\n"
+        f"{fmt_date(result['date'])}\n"
+        f"{result['time']}\n"
+        f"Token No: *{result['token']}*\n\n"
         "Please arrive 10 mins early. Bring this token number.\n\n"
         "Type *status* to view appointment.\n"
         "Type *cancel* to cancel."
