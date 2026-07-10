@@ -45,9 +45,9 @@ def handle_message(phone: str, text: str) -> str:
             return (
                 f"Your appointment with {result['doctor']} on "
                 f"{fmt_date(result['date'])} at {result['time']} has been cancelled.\n\n"
-                "Type *hi* to book a new appointment."
+                "Type hi to book a new appointment."
             )
-        return f"{result['message']}\n\nType *hi* to book a new appointment."
+        return f"{result['message']}\n\nType hi to book a new appointment."
 
     if text in ("status", "my appointment", "appointment"):
         appt = get_upcoming_appointment(phone)
@@ -59,9 +59,9 @@ def handle_message(phone: str, text: str) -> str:
                 f"{fmt_date(appt['appointment_date'])}\n"
                 f"{appt['slot_time']}\n"
                 f"Token No: *{appt['token_number']}*\n\n"
-                "Type *cancel* to cancel this appointment."
+                "Type cancel to cancel this appointment."
             )
-        return "No upcoming appointment found.\n\nType *hi* to book one."
+        return "No upcoming appointment found.\n\nType hi to book one."
 
     if text in ("hi", "hello", "hey", "book", "start", "menu", "0", "home"):
         return _step_welcome(phone)
@@ -108,13 +108,13 @@ def _step_choose_dept(phone: str, text: str, data: dict) -> str:
     except:
         return (
             f"Please select an option number (1-{len(depts)}) to continue booking.\n"
-            "If you want to ask a general question, type *cancel* first."
+            "If you want to ask a general question, type cancel first."
         )
 
     dept = depts[idx]
     doctors = get_doctors_by_dept(dept)
     if not doctors:
-        return f"No doctors available in {dept} right now. Type *hi* to go back."
+        return f"No doctors available in {dept} right now. Type hi to go back."
 
     doctor_names = [d["name"] for d in doctors]
     set_session(phone, "choose_doctor", {"dept": dept, "doctors": doctors})
@@ -133,13 +133,13 @@ def _step_choose_doctor(phone: str, text: str, data: dict) -> str:
     except:
         return (
             f"Please select an option number (1-{len(doctors)}) to continue booking.\n"
-            "If you want to ask a general question, type *cancel* first."
+            "If you want to ask a general question, type cancel first."
         )
 
     doctor = doctors[idx]
     dates = get_available_dates(doctor["id"])
     if not dates:
-        return "No dates available for this doctor. Type *hi* to go back."
+        return "No dates available for this doctor. Type hi to go back."
 
     set_session(phone, "choose_date", {
         "dept": data["dept"],
@@ -163,7 +163,7 @@ def _step_choose_date(phone: str, text: str, data: dict) -> str:
     except:
         return (
             f"Please select an option number (1-{len(dates)}) to continue booking.\n"
-            "If you want to ask a general question, type *cancel* first."
+            "If you want to ask a general question, type cancel first."
         )
 
     chosen_date = dates[idx]
@@ -171,7 +171,7 @@ def _step_choose_date(phone: str, text: str, data: dict) -> str:
     slots = get_available_slots(doctor["id"], chosen_date)
 
     if not slots:
-        return "No slots available on this date. Type *hi* to pick another date."
+        return "No slots available on this date. Type hi to pick another date."
 
     set_session(phone, "choose_slot", {
         "dept": data["dept"],
@@ -194,7 +194,7 @@ def _step_choose_slot(phone: str, text: str, data: dict) -> str:
     except:
         return (
             f"Please select an option number (1-{len(slots)}) to continue booking.\n"
-            "If you want to ask a general question, type *cancel* first."
+            "If you want to ask a general question, type cancel first."
         )
 
     chosen_slot = slots[idx]
@@ -228,7 +228,7 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
         return (
             f"Sorry! *{doctor['name']}* is not available on "
             f"*{fmt_date(chosen_date)}* (marked on leave).\n\n"
-            "Type *hi* to book another date."
+            "Type hi to book another date."
         )
 
     result = book_appointment(
@@ -242,7 +242,7 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
     clear_session(phone)
 
     if not result["success"]:
-        return f"{result['message']}\n\nType *hi* to try again."
+        return f"{result['message']}\n\nType hi to try again."
 
     return (
         f"*Appointment Confirmed!*\n\n"
@@ -253,7 +253,7 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
         f"{result['time']}\n"
         f"Token No: *{result['token']}*\n\n"
         "Please arrive 10 mins early. Bring this token number.\n\n"
-        "Type *status* to view appointment.\n"
-        "Type *cancel* to cancel."
+        "Type status to view appointment.\n"
+        "Type cancel to cancel."
     )
 

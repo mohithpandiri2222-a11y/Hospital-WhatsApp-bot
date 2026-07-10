@@ -31,7 +31,7 @@ def send_appointment_reminders():
             f"{appt['department']}\n"
             f"{appt['slot_time']}\n"
             f"Token No: *{appt['token_number']}*\n\n"
-            "Please arrive 10 mins early. Type *cancel* to cancel."
+            "Please arrive 10 mins early. Type cancel to cancel."
         )
         send_whatsapp(f"whatsapp:{appt['patient_phone']}", msg)
         count += 1

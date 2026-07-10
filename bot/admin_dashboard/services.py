@@ -92,7 +92,7 @@ def cancel_appointment(appt_id):
                 f"*Appointment Cancelled*\n\n"
                 f"We apologize, but your appointment with *{appt['doctor_name']}* on "
                 f"*{date_str}* at *{appt['slot_time']}* has been cancelled by the hospital.\n\n"
-                "Please type *hi* to book a new slot."
+                "Type hi to start booking an appointment."
             )
             send_whatsapp(appt["patient_phone"], msg)
         except Exception as e:
@@ -150,7 +150,7 @@ def mark_doctor_leave(doctor_id, leave_date, reason=""):
                 f"*Emergency Appointment Cancellation*\n\n"
                 f"We apologize, but your appointment with *{appt['doctor_name']}* on "
                 f"*{date_str}* at *{appt['slot_time']}* has been cancelled because the doctor had to take an emergency leave.\n\n"
-                "Please type *hi* to book a new slot for a different day."
+                "Type hi to start booking an appointment."
             )
             try:
                 send_whatsapp(appt["patient_phone"], msg)
