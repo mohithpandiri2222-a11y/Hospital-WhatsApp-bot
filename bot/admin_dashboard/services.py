@@ -86,7 +86,6 @@ def cancel_appointment(appt_id):
         clear_session(appt["patient_phone"])
         try:
             from services.whatsapp_service import send_whatsapp
-            from datetime import datetime
             date_str = datetime.strptime(appt["appointment_date"], "%Y-%m-%d").strftime("%a, %d %b")
             msg = (
                 f"*Appointment Cancelled*\n\n"
@@ -139,7 +138,6 @@ def mark_doctor_leave(doctor_id, leave_date, reason=""):
         
         # 3. Auto-cancel them and notify patients
         from services.whatsapp_service import send_whatsapp
-        from datetime import datetime
         date_str = datetime.strptime(leave_date, "%Y-%m-%d").strftime("%a, %d %b")
         
         for appt in appts:

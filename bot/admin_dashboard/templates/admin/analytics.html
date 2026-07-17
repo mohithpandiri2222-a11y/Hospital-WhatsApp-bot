@@ -1,4 +1,5 @@
 {% extends "base_admin.html" %}
+{% set active = 'analytics' %}
 {% block title %}Analytics{% endblock %}
 {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -56,7 +57,7 @@
 </div>
 
 <!-- Dept Pie + Doctor Bar side by side on desktop -->
-<div style="display:grid;grid-template-columns:1fr;gap:24px;">
+<div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap:24px;">
   <div class="chart-card">
     <div class="chart-title">Appointments by Department</div>
     <div class="chart-container" style="height:220px;">

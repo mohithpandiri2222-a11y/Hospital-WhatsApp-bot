@@ -10,8 +10,10 @@ def get_session(phone: str) -> dict:
         return {"step": row["step"], "temp_data": json.loads(row["temp_data"])}
     return {"step": "start", "temp_data": {}}
 
-def set_session(phone: str, step: str, temp_data: dict = {}):
+def set_session(phone: str, step: str, temp_data: dict = None):
     """Create or update session for a patient."""
+    if temp_data is None:
+        temp_data = {}
     db = get_db()
     db.execute(
         """INSERT INTO sessions (phone, step, temp_data, updated_at)

@@ -1,4 +1,5 @@
 {% extends "base_admin.html" %}
+{% set active = 'dashboard' %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h1 class="page-title">Dashboard</h1>
@@ -53,7 +54,7 @@
   <table>
     <thead>
       <tr>
-        <th>Token</th><th>Patient</th><th>Doctor</th><th>Dept</th><th>Time</th><th>Status</th><th>Action</th>
+        <th>Token</th><th>Patient</th><th>Doctor</th><th>Time</th><th>Status</th><th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -62,7 +63,6 @@
         <td><strong>#{{ a.token_number }}</strong></td>
         <td>{{ a.patient_name or '—' }}<br><small style="color:var(--text-muted)">{{ a.patient_phone }}</small></td>
         <td>{{ a.doctor_name }}<br><small style="color:var(--text-muted)">{{ a.department }}</small></td>
-        <td>{{ a.department }}</td>
         <td>{{ a.slot_time }}</td>
         <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
         <td>
@@ -75,7 +75,7 @@
       </tr>
       {% else %}
       <tr class="empty-row">
-        <td colspan="7">
+        <td colspan="6">
           <div class="empty-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
           </div>
@@ -97,7 +97,7 @@
   <table>
     <thead>
       <tr>
-        <th>Token</th><th>Patient</th><th>Doctor</th><th>Dept</th><th>Time</th><th>Status</th><th>Action</th>
+        <th>Token</th><th>Patient</th><th>Doctor</th><th>Time</th><th>Status</th><th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -106,7 +106,6 @@
         <td><strong>#{{ a.token_number }}</strong></td>
         <td>{{ a.patient_name or '—' }}<br><small style="color:var(--text-muted)">{{ a.patient_phone }}</small></td>
         <td>{{ a.doctor_name }}<br><small style="color:var(--text-muted)">{{ a.department }}</small></td>
-        <td>{{ a.department }}</td>
         <td>{{ a.slot_time }}</td>
         <td><span class="badge badge-{{ a.status }}">{{ a.status }}</span></td>
         <td>
@@ -119,7 +118,7 @@
       </tr>
       {% else %}
       <tr class="empty-row">
-        <td colspan="7">
+        <td colspan="6">
           <div class="empty-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
           </div>

@@ -11,6 +11,8 @@ States:
   idle               → booking done, handle cancel/status/restart
 """
 
+from datetime import datetime
+from db.connection import get_db
 from services.session_service import get_session, set_session, clear_session
 from services.appointment_service import (
     get_departments, get_doctors_by_dept, get_available_dates,
@@ -23,7 +25,6 @@ from services.ai_service import get_ai_response
 
 def fmt_date(d: str) -> str:
     """Convert 2025-06-10 → Tue, 10 Jun"""
-    from datetime import datetime
     return datetime.strptime(d, "%Y-%m-%d").strftime("%a, %d %b")
 
 def numbered_list(items: list) -> str:
@@ -105,7 +106,7 @@ def _step_choose_dept(phone: str, text: str, data: dict) -> str:
     try:
         idx = int(text) - 1
         assert 0 <= idx < len(depts)
-    except:
+    except Exception:
         return (
             f"Please select an option number (1-{len(depts)}) to continue booking.\n"
             "If you want to ask a general question, type cancel first."
@@ -215,7 +216,6 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
     chosen_date = data["date"]
 
     # ── Re-check: block if doctor is on leave for chosen date ──
-    from db.connection import get_db
     db = get_db()
     on_leave = db.execute(
         "SELECT id FROM doctor_leaves WHERE doctor_id=? AND leave_date=?",

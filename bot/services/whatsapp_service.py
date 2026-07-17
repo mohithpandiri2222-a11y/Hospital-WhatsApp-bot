@@ -1,5 +1,8 @@
+import logging
 from twilio.rest import Client
 from config import Config
+
+logger = logging.getLogger(__name__)
 
 client = Client(Config.TWILIO_SID, Config.TWILIO_TOKEN)
 
@@ -10,7 +13,7 @@ def send_whatsapp(to_phone: str, message: str):
     """
     try:
         try:
-            print("BOT RESPONSE:", message.encode("ascii", "ignore").decode("ascii"), flush=True)
+            logger.debug("BOT RESPONSE: %s", message.encode("ascii", "ignore").decode("ascii"))
         except Exception:
             pass
         if not to_phone.startswith("whatsapp:"):

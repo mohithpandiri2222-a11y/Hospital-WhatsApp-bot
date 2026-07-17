@@ -10,7 +10,8 @@ def get_db():
     return conn
 
 def init_db():
-    with open("db/schema.sql") as f:
+    schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
+    with open(schema_path) as f:
         sql = f.read()
     conn = get_db()
     conn.executescript(sql)

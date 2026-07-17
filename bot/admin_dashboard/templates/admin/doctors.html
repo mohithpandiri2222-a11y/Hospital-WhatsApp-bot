@@ -1,4 +1,5 @@
 {% extends "base_admin.html" %}
+{% set active = 'doctors' %}
 {% block title %}Doctors{% endblock %}
 {% block content %}
 <h1 class="page-title">Doctors & Leaves</h1>
@@ -38,10 +39,7 @@
   <hr style="border:none; border-top: 1px solid var(--border); margin: 24px 0;">
 
   <div class="leave-section" style="margin-top: 0;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
-      <div style="font-size: 12px; font-weight: 600; color: var(--text);">Leave Dates</div>
-      <a href="#" style="font-size: 12px; color: var(--primary); font-weight: 500;">View All</a>
-    </div>
+      <div style="font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 16px;">Leave Dates</div>
     
     {% if doc.leaves %}
     <div class="leave-tags" style="display:flex; flex-direction:column; gap:12px;">
