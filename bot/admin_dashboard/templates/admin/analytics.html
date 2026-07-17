@@ -9,19 +9,19 @@
 <!-- Stats Row -->
 <div class="stats-row">
   <div class="stat-card">
-    <div class="stat-card-label">This Month</div>
+    <div class="stat-card-label">📅 This Month</div>
     <div class="stat-card-value">{{ data.month_total }}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-card-label">Busiest Day</div>
+    <div class="stat-card-label">📈 Busiest Day</div>
     <div class="stat-card-value">{% if data.busiest_day %}{{ data.busiest_day.appointment_date }} ({{ data.busiest_day.count }}){% else %}—{% endif %}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-card-label">Busiest Doctor</div>
+    <div class="stat-card-label">👨‍⚕️ Busiest Doctor</div>
     <div class="stat-card-value">{% if data.busiest_doctor %}{{ data.busiest_doctor.name }}{% else %}—{% endif %}</div>
   </div>
   <div class="stat-card">
-    <div class="stat-card-label">Top Department</div>
+    <div class="stat-card-label">🏥 Top Department</div>
     <div class="stat-card-value">{% if data.by_dept %}{{ data.by_dept[0].department }}{% else %}—{% endif %}</div>
   </div>
 </div>
@@ -29,11 +29,11 @@
 <!-- Daily Bar Chart -->
 {% if data.month_total == 0 %}
 <div class="chart-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center;">
-  <div class="empty-icon" style="margin-bottom: 24px; color: var(--border);">
-    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+  <div style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 24px;">Appointments Last 30 Days</div>
+  <div class="empty-icon" style="font-size: 48px; margin-bottom: 16px;">
+    📈
   </div>
-  <div style="font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px;">No appointment data available.</div>
-  <div style="font-size: 15px; color: var(--text-muted); max-width: 400px;">Analytics will automatically appear after appointments are booked.</div>
+  <div style="font-size: 15px; color: var(--text-muted); max-width: 400px;">No analytics available yet</div>
 </div>
 {% else %}
 <div class="chart-card">

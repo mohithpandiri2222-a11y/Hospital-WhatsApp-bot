@@ -19,7 +19,7 @@
   --bg: #EAF6F6;
   --white: #FFFFFF;
   
-  --sidebar-w: 240px;
+  --sidebar-w: 216px;
   --tab-h: 64px;
   
   --radius-sm: 8px;
@@ -201,7 +201,7 @@ ul { list-style: none; }
   padding: 24px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  border-left: 5px solid var(--primary);
+  border-top: 4px solid var(--primary);
   display: flex;
   align-items: flex-start;
   gap: 24px;
@@ -213,8 +213,8 @@ ul { list-style: none; }
 }
 
 .card-icon {
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: var(--primary-light);
   color: var(--primary);
@@ -223,7 +223,7 @@ ul { list-style: none; }
   justify-content: center;
   flex-shrink: 0;
 }
-.card-icon svg { width: 28px; height: 28px; }
+.card-icon svg { width: 32px; height: 32px; }
 
 .card-info {
   display: flex;
@@ -239,7 +239,7 @@ ul { list-style: none; }
 }
 
 .card-value {
-  font-size: 42px;
+  font-size: 50px;
   font-weight: 700;
   color: var(--primary);
   line-height: 1;
@@ -257,7 +257,7 @@ ul { list-style: none; }
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
-  margin-top: 16px;
+  margin-top: 32px;
 }
 
 .section-title {
@@ -301,7 +301,7 @@ tbody td {
   font-size: 16px;
   border-bottom: 1px solid var(--border-light);
   vertical-align: middle;
-  height: 56px;
+  height: 64px;
 }
 
 tbody tr:last-child td { border-bottom: none; }
@@ -330,9 +330,10 @@ tbody tr:hover { background: #F9FFFF; }
   letter-spacing: .03em;
 }
 
-.badge-booked { background: var(--primary-light); color: var(--primary); }
+.badge-booked { background: #DCFCE7; color: var(--success); }
 .badge-cancelled { background: #FEE2E2; color: var(--danger); }
-.badge-completed { background: #DCFCE7; color: var(--success); }
+.badge-completed { background: #DBEAFE; color: #1D4ED8; }
+.badge-pending { background: #FEF3C7; color: #B45309; }
 
 /* ── Buttons ────────────────────────────────────────────────── */
 .btn {
@@ -340,7 +341,8 @@ tbody tr:hover { background: #F9FFFF; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 24px;
+  padding: 0 24px;
+  height: 46px;
   border-radius: var(--radius);
   font-size: 14px;
   font-weight: 600;
@@ -353,7 +355,7 @@ tbody tr:hover { background: #F9FFFF; }
 
 .btn:active { transform: scale(0.98); }
 
-.btn-sm { padding: 8px 16px; font-size: 13px; }
+.btn-sm { padding: 0 16px; height: 36px; font-size: 13px; }
 
 .btn-primary { background: var(--primary); color: var(--white); }
 .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow); }
