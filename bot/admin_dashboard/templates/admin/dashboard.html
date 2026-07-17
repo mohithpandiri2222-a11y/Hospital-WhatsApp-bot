@@ -2,7 +2,7 @@
 {% block title %}Dashboard{% endblock %}
 {% block content %}
 <h1 class="page-title">Dashboard</h1>
-<div style="margin-bottom: 32px;">
+<div style="margin-bottom: 12px;">
   <div id="greeting-date" style="font-size: 15px; color: var(--text-muted); font-weight: 500;"></div>
   <div id="greeting-msg" style="font-size: 20px; font-weight: 700; color: var(--text); margin-top: 4px;"></div>
 </div>
@@ -13,33 +13,33 @@
   <div class="card card-primary">
     <span class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg></span>
     <div class="card-info">
-      <div class="card-label">Today's Appointments</div>
+      <div class="card-label">TODAY</div>
       <div class="card-value">{{ stats.today }}</div>
-      <div class="card-subtitle">Scheduled for today</div>
+      <div class="card-subtitle">Appointments</div>
     </div>
   </div>
   <div class="card card-primary">
     <span class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></span>
     <div class="card-info">
-      <div class="card-label">Tomorrow's Appointments</div>
+      <div class="card-label">TOMORROW</div>
       <div class="card-value">{{ stats.tomorrow }}</div>
-      <div class="card-subtitle">Upcoming tomorrow</div>
+      <div class="card-subtitle">Appointments</div>
     </div>
   </div>
   <div class="card card-success">
     <span class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
     <div class="card-info">
-      <div class="card-label">Total Patients</div>
+      <div class="card-label">TOTAL</div>
       <div class="card-value">{{ stats.patients }}</div>
-      <div class="card-subtitle">Registered in system</div>
+      <div class="card-subtitle">Patients</div>
     </div>
   </div>
   <div class="card card-primary">
     <span class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2v2"/><path d="M5 2v2"/><path d="M5 10V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v4"/><path d="M14 2v10a4 4 0 1 1-8 0V8"/><path d="M10 20a6 6 0 1 0 0-12"/><path d="M10 20v-4"/></svg></span>
     <div class="card-info">
-      <div class="card-label">Total Doctors</div>
+      <div class="card-label">ACTIVE</div>
       <div class="card-value">{{ stats.doctors }}</div>
-      <div class="card-subtitle">Active staff</div>
+      <div class="card-subtitle">Doctors</div>
     </div>
   </div>
 </div>

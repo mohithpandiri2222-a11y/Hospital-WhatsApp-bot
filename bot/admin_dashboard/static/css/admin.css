@@ -201,7 +201,7 @@ ul { list-style: none; }
   padding: 24px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  border-top: 4px solid var(--primary);
+  border-top: 3px solid var(--primary);
   display: flex;
   align-items: flex-start;
   gap: 24px;
@@ -213,8 +213,8 @@ ul { list-style: none; }
 }
 
 .card-icon {
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   background: var(--primary-light);
   color: var(--primary);
@@ -223,7 +223,7 @@ ul { list-style: none; }
   justify-content: center;
   flex-shrink: 0;
 }
-.card-icon svg { width: 32px; height: 32px; }
+.card-icon svg { width: 36px; height: 36px; }
 
 .card-info {
   display: flex;
@@ -239,7 +239,7 @@ ul { list-style: none; }
 }
 
 .card-value {
-  font-size: 50px;
+  font-size: 56px;
   font-weight: 700;
   color: var(--primary);
   line-height: 1;
@@ -316,7 +316,7 @@ tbody tr:hover { background: #F9FFFF; }
 
 .empty-icon {
   margin-bottom: 16px;
-  color: var(--border);
+  color: #A0ABAB;
 }
 
 /* ── Status Badges ─────────────────────────────────────────── */
@@ -347,7 +347,7 @@ tbody tr:hover { background: #F9FFFF; }
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  border: none;
+  border: 1px solid transparent;
   transition: all 0.2s;
   text-align: center;
   white-space: nowrap;
@@ -451,6 +451,7 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
+  align-items: center;
 }
 
 .search-bar input { flex: 1; }
