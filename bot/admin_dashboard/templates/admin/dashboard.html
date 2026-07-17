@@ -139,9 +139,9 @@
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('greeting-date').innerText = now.toLocaleDateString('en-GB', options);
   const hour = now.getHours();
-  let greeting = 'Good evening 👋';
-  if (hour < 12) greeting = 'Good morning 👋';
-  else if (hour < 18) greeting = 'Good afternoon 👋';
+  let greeting = 'Good evening';
+  if (hour < 12) greeting = 'Good morning';
+  else if (hour < 18) greeting = 'Good afternoon';
   document.getElementById('greeting-msg').innerText = greeting;
 </script>
 {% endblock %}
