@@ -117,13 +117,30 @@ def _step_choose_dept(phone: str, text: str, data: dict) -> str:
     if not doctors:
         return f"No doctors available in {dept} right now. Type hi to go back."
 
-    doctor_names = [d["name"] for d in doctors]
+    fees = {
+        "Dr. Kiran Mehta": "₹500",
+        "Dr. Priya Sharma": "₹200",
+        "Dr. Ramesh Kumar": "₹300",
+        "Dr. Anjali Verma": "₹400",
+        "Dr. Vivek Rao": "₹450",
+        "Dr. Sneha Reddy": "₹250"
+    }
+
+    doctor_options = []
+    for i, d in enumerate(doctors):
+        name = d["name"]
+        fee = fees.get(name)
+        if fee:
+            doctor_options.append(f"{i+1}. {name}\n   Consultation Fee: {fee}")
+        else:
+            doctor_options.append(f"{i+1}. {name}")
+
+    doctor_list_str = "\n\n".join(doctor_options)
     set_session(phone, "choose_doctor", {"dept": dept, "doctors": doctors})
     return (
-        f"*{dept}*\n\n"
-        "*Choose your doctor:*\n"
-        f"{numbered_list(doctor_names)}\n\n"
-        "_Reply with the number_"
+        "Choose your doctor:\n\n"
+        f"{doctor_list_str}\n\n"
+        "Reply with the number."
     )
 
 def _step_choose_doctor(phone: str, text: str, data: dict) -> str:
