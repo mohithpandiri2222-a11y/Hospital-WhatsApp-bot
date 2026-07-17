@@ -27,6 +27,15 @@
 </div>
 
 <!-- Daily Bar Chart -->
+{% if data.month_total == 0 %}
+<div class="chart-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center;">
+  <div class="empty-icon" style="margin-bottom: 24px; color: var(--border);">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>
+  </div>
+  <div style="font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px;">No appointment data available.</div>
+  <div style="font-size: 15px; color: var(--text-muted); max-width: 400px;">Analytics will automatically appear after appointments are booked.</div>
+</div>
+{% else %}
 <div class="chart-card">
   <div class="chart-title">Appointments per Day (Last 30 Days)</div>
   <div class="chart-container" style="height:220px;">
@@ -35,7 +44,7 @@
 </div>
 
 <!-- Dept Pie + Doctor Bar side by side on desktop -->
-<div style="display:grid;grid-template-columns:1fr;gap:16px;">
+<div style="display:grid;grid-template-columns:1fr;gap:24px;">
   <div class="chart-card">
     <div class="chart-title">Appointments by Department</div>
     <div class="chart-container" style="height:220px;">
@@ -49,6 +58,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 {% endblock %}
 {% block scripts %}
 <script>
