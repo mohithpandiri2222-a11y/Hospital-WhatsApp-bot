@@ -226,9 +226,9 @@ def _step_confirm_name(phone: str, text: str, data: dict) -> str:
     if on_leave:
         clear_session(phone)
         return (
-            f"Sorry! *{doctor['name']}* is not available on "
-            f"*{fmt_date(chosen_date)}* (marked on leave).\n\n"
-            "Type hi to book another date."
+            f"❌ Sorry! *{doctor['name']}* is not available on "
+            f"*{fmt_date(chosen_date)}*.\n\n"
+            "Please type 'hi' to book another appointment date."
         )
 
     result = book_appointment(
